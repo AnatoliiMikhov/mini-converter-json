@@ -9,7 +9,7 @@ inputRub.addEventListener('input', () => {
     let request = new XMLHttpRequest();
     // https://developer.mozilla.org/ru/docs/Web/API/XMLHttpRequest
     // request.open(method, url, async, login, password);
-    request.open('GET', './current.json');
+    request.open('GET', 'js/current.json');
     request.setRequestHeader('Content-type', 'application/json', 'charset=utf-8');
     request.send();
 
