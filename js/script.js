@@ -1,37 +1,42 @@
 'use strict';
 
-const inputRub = document.getElementById('rub'),
-    inputUsd = document.getElementById('usd');
+let inputUAN = document.getElementById('UAN'),
+    inputUSD = document.getElementById('USD');
 
+inputUAN.addEventListener('input', () => {
 
-inputRub.addEventListener('input', () => {
+    function catchData() {
 
-    let request = new XMLHttpRequest();
-    // https://developer.mozilla.org/ru/docs/Web/API/XMLHttpRequest
-    // request.open(method, url, async, login, password);
-    request.open('GET', 'js/current.json');
-    request.setRequestHeader('Content-type', 'application/json', 'charset=utf-8');
-    request.send();
+        return new Promise(function(resolve, reject) {
+            let request = new XMLHttpRequest();
+            request.open("GET", "js/current.json");
 
-    // status
-    // statusText - OK or Not found
-    // responsText - response content
-    // response
-    // readyState - 0, 1, 2, 3, 4
-    // https://developer.mozilla.org/ru/docs/Web/API/XMLHttpRequest/readyState
+            request.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+            request.send();
 
-    request.addEventListener('readystatechange', () => {
-        if (request.readyState == 4 && request.status == 200) {
-            let data = JSON.parse(request.response);
+            request.onload = function() {
+                if (request.readyState === 4) {
+                    if (request.status == 200 && !isNaN(inputUAN.value)) {
+                        resolve(this.response)
+                    } else {
+                        reject();
 
-            if (!isNaN(inputRub.value)) {
-                inputUsd.value = inputRub.value / data.usd;
-            } else {
-                inputRub.value = '';
-                alert('Введите сумму числами.');
+                    }
+                }
             }
-        } else {
-            inputUsd.value = 'Попробуйте ещё раз.';
-        }
-    });
+        });
+    };
+
+    catchData()
+        .then(response => {
+            let data = JSON.parse(response);
+            inputUSD.value = inputUAN.value / data.usd;
+        })
+        .catch(() => {
+            inputUSD.value = "Что-то пошло не так";
+            alert('Enter number');
+            inputUAN.value = inputUAN.value.slice(0, -1);
+        });
+
+
 });
